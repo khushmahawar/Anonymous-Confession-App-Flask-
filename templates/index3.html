@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realtime Flask</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h2>💭💜 Let Your Heart Whisper 🤫🌌</h2>
+    <ul id="messages"></ul>
+    <input id="msg" placeholder="Type message"/><br> <br>
+    <button onclick="sendMsg();changecolor();">Send</button>
+
+    <script>
+        const socket = io();
+
+        socket.on('message', (data) => {
+            let li = document.createElement("li");
+            li.textContent = data;
+            li.style.padding = "10px";
+            li.style.margin = "10px";
+            li.innerHTML = data.replace(/\n/g, "<br>");
+            li.style.listStyleType = "none";
+            li.style.border = "2px solid black";
+            li.style.borderRadius = "10px";
+            li.style.backgroundColor = myColor;
+            document.getElementById("messages").appendChild(li);
+            scrollToBottom();
+        });
+        function changecolor(){
+            socket.on("colour", (data) => {
+                myColor ="#"+ data;
+            });
+            socket.emit("colour",{});
+        }
+
+        function sendMsg() {
+            const msg = document.getElementById("msg").value;
+            const name = "{{ name }}"; // Get the username from the template context
+            socket.send(name,msg);
+            document.getElementById("msg").value = "";
+            
+        }
+         function scrollToBottom() {
+            const messages = document.getElementById("messages");
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+    </script>
+
+
+<style>
+    /* Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: radial-gradient(circle at top, #3a0ca3, #0f0c29);
+        color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    h2 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.5rem;
+  text-align: center;
+  color: #e0b3ff;
+  text-shadow: 
+      0 0 10px #a855f7,
+      0 0 20px #9333ea,
+      0 0 30px #7e22ce;
+  letter-spacing: 2px;
+  margin: 20px 0;
+  animation: glowPulse 2.5s infinite alternate;
+}
+
+/* Glow animation */
+@keyframes glowPulse {
+  from {
+    text-shadow: 
+      0 0 8px #a855f7,
+      0 0 16px #9333ea,
+      0 0 24px #7e22ce;
+  }
+  to {
+    text-shadow: 
+      0 0 20px #c084fc,
+      0 0 40px #a855f7,
+      0 0 60px #9333ea;
+  }
+}
+
+    /* Input & Button */
+    #msg {
+        padding: 12px 20px;
+        border-radius: 25px;
+        border: none;
+        outline: none;
+        width: 250px;
+        font-size: 1rem;
+        margin-right: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        backdrop-filter: blur(10px);
+        transition: 0.3s;
+    }
+    #msg::placeholder {
+        color: #ddd;
+    }
+    #msg:focus {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #9d4edd, #6242d6);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+    }
+    button:hover {
+        background: linear-gradient(135deg, #b07cf5, #7c5fe5);
+        transform: scale(1.05);
+    }
+
+    /* Message List */
+    #messages {
+        margin-top: 25px;
+        list-style: none;
+        width: 100%;
+        max-height: 500px;
+        overflow-y: auto;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #messages li {
+        padding: 12px 18px;
+        border-radius: 15px;
+        font-size: 1rem;
+        line-height: 1.4;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        color: black;
+        word-wrap: break-word;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Alternating message bubble style */
+    #messages li:nth-child(odd) {
+        align-self: flex-start;
+        border-left: 4px solid #ff6a95;
+    }
+    #messages li:nth-child(even) {
+        align-self: flex-end;
+        border-right: 4px solid #9d4edd;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+
+
+</body>
+</html>
