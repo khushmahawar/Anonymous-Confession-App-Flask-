@@ -11,7 +11,13 @@
     <button onclick="sendMsg();changecolor();">Send</button>
 
     <script>
-        const socket = io();
+        const socket = io(window.location.origin);
+
+        let myColor = "#ffffff";
+
+        socket.on("colour", (data) => {
+            myColor = "#" + data;
+        });
 
         socket.on('message', (data) => {
             let li = document.createElement("li");
@@ -27,19 +33,23 @@
             scrollToBottom();
         });
         function changecolor(){
-            socket.on("colour", (data) => {
-                myColor ="#"+ data;
-            });
-            socket.emit("colour",{});
-        }
+    socket.emit("colour");
+}
 
         function sendMsg() {
-            const msg = document.getElementById("msg").value;
-            const name = "{{ name }}"; // Get the username from the template context
-            socket.send(name,msg);
-            document.getElementById("msg").value = "";
-            
-        }
+
+    const msg = document.getElementById("msg").value;
+    const name = "{{ name }}";
+
+    if(msg.trim()=="") return;
+
+    socket.emit("message",{
+        name:name,
+        msg:msg
+    });
+
+    document.getElementById("msg").value="";
+}
          function scrollToBottom() {
             const messages = document.getElementById("messages");
             messages.scrollTop = messages.scrollHeight;
