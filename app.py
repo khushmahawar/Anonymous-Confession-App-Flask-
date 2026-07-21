@@ -19,10 +19,15 @@ def index():
 def main():
     return render_template('index3.html', name=request.args.get('name'))
     
-    
-@socketio.on('message')
-def handle_message(name, msg):
-    emit('message', f"<b>{name}</b>\n{msg}", broadcast=True)
+@socketio.on("message")
+def handle_message(data):
+    name = data["name"]
+    msg = data["msg"]
+    emit(
+        "message",
+        f"<b>{name}</b><br>{msg}",
+        broadcast=True
+    )
 
 @socketio.on('colour')
 def handle_colour(colour):
